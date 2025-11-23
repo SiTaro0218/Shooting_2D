@@ -29,12 +29,28 @@ public class PlayerController : MonoBehaviour
         // Calculate screen bounds
         screenBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, mainCamera.transform.position.z));
         
-        // Get object size
+        // Get object size - try SpriteRenderer first, fall back to Collider
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
         {
             objectWidth = spriteRenderer.bounds.extents.x;
             objectHeight = spriteRenderer.bounds.extents.y;
+        }
+        else
+        {
+            // Fallback to collider bounds if no sprite renderer
+            Collider2D collider = GetComponent<Collider2D>();
+            if (collider != null)
+            {
+                objectWidth = collider.bounds.extents.x;
+                objectHeight = collider.bounds.extents.y;
+            }
+            else
+            {
+                // Default size if no renderer or collider
+                objectWidth = 0.25f;
+                objectHeight = 0.25f;
+            }
         }
     }
 

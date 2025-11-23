@@ -34,21 +34,20 @@ public class PrefabCreator : MonoBehaviour
 
     private static void CreatePlayerPrefab()
     {
-        // Create player GameObject
-        GameObject player = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        player.name = "Player";
+        // Create player GameObject with 2D sprite
+        GameObject player = new GameObject("Player");
         player.tag = "Player";
         player.layer = LayerMask.NameToLayer("Player") != -1 ? LayerMask.NameToLayer("Player") : 0;
         
-        // Set color
-        var renderer = player.GetComponent<Renderer>();
-        renderer.material.color = new Color(0.2f, 0.5f, 1f); // Blue
+        // Add SpriteRenderer for 2D
+        var renderer = player.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateSquareSprite();
+        renderer.color = new Color(0.2f, 0.5f, 1f); // Blue
         
         // Scale
         player.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
         
-        // Remove MeshCollider and add BoxCollider2D
-        DestroyImmediate(player.GetComponent<MeshCollider>());
+        // Add BoxCollider2D
         var collider = player.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
         
@@ -80,16 +79,15 @@ public class PrefabCreator : MonoBehaviour
 
     private static void CreatePlayerBulletPrefab()
     {
-        GameObject bullet = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        bullet.name = "PlayerBullet";
+        GameObject bullet = new GameObject("PlayerBullet");
         bullet.tag = "PlayerBullet";
         
-        var renderer = bullet.GetComponent<Renderer>();
-        renderer.material.color = Color.yellow;
+        var renderer = bullet.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateSquareSprite();
+        renderer.color = Color.yellow;
         
         bullet.transform.localScale = new Vector3(0.2f, 0.4f, 1f);
         
-        DestroyImmediate(bullet.GetComponent<MeshCollider>());
         var collider = bullet.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
         
@@ -109,17 +107,16 @@ public class PrefabCreator : MonoBehaviour
 
     private static void CreateEnemyPrefab()
     {
-        GameObject enemy = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        enemy.name = "Enemy";
+        GameObject enemy = new GameObject("Enemy");
         enemy.tag = "Enemy";
         enemy.layer = LayerMask.NameToLayer("Enemy") != -1 ? LayerMask.NameToLayer("Enemy") : 0;
         
-        var renderer = enemy.GetComponent<Renderer>();
-        renderer.material.color = Color.red;
+        var renderer = enemy.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateSquareSprite();
+        renderer.color = Color.red;
         
         enemy.transform.localScale = new Vector3(0.6f, 0.6f, 1f);
         
-        DestroyImmediate(enemy.GetComponent<MeshCollider>());
         var collider = enemy.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
         
@@ -149,17 +146,16 @@ public class PrefabCreator : MonoBehaviour
 
     private static void CreateEnemyBulletPrefab()
     {
-        GameObject bullet = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        bullet.name = "EnemyBullet";
+        GameObject bullet = new GameObject("EnemyBullet");
         bullet.tag = "EnemyBullet";
         
-        var renderer = bullet.GetComponent<Renderer>();
-        renderer.material.color = new Color(1f, 0.5f, 0f); // Orange
+        var renderer = bullet.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateSquareSprite();
+        renderer.color = new Color(1f, 0.5f, 0f); // Orange
         
         bullet.transform.localScale = new Vector3(0.2f, 0.4f, 1f);
         bullet.transform.rotation = Quaternion.Euler(0, 0, 180);
         
-        DestroyImmediate(bullet.GetComponent<MeshCollider>());
         var collider = bullet.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
         
@@ -187,6 +183,24 @@ public class PrefabCreator : MonoBehaviour
         
         PrefabUtility.SaveAsPrefabAsset(obj, path);
         Debug.Log($"Created prefab: {path}");
+    }
+
+    private static Sprite CreateSquareSprite()
+    {
+        // Create a simple 1x1 white square texture
+        Texture2D texture = new Texture2D(1, 1);
+        texture.SetPixel(0, 0, Color.white);
+        texture.Apply();
+        
+        // Create sprite from texture
+        Sprite sprite = Sprite.Create(
+            texture,
+            new Rect(0, 0, 1, 1),
+            new Vector2(0.5f, 0.5f),
+            1f
+        );
+        
+        return sprite;
     }
 }
 #endif
