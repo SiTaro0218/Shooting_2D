@@ -2,7 +2,7 @@
 
 public class CameraController : MonoBehaviour
 {
-    // スクロール速度 (Inspectorから調整できるようにpublicにする)
+    // スクロール速度
     public float scrollSpeed = 2.0f;
 
     // ゲームが進行中かどうかのフラグ
@@ -11,7 +11,7 @@ public class CameraController : MonoBehaviour
     // Start is called before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // 初期状態として、カメラはスクロールを開始する
+        // 初期状態として，カメラはスクロールを開始する
         isScrolling = true;
     }
 
@@ -24,7 +24,7 @@ public class CameraController : MonoBehaviour
             Vector3 currentPosition = transform.position;
 
             // Y軸方向に scrollSpeed * 1秒間の経過時間 分だけ移動
-            // Time.deltaTimeを使うことで、フレームレートに関わらず一定速度で移動できる
+            // Time.deltaTimeで，フレームレートに関わらず一定速度で移動できる
             currentPosition.y += scrollSpeed * Time.deltaTime;
 
             // カメラの位置を更新
