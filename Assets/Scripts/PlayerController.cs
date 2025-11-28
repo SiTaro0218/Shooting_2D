@@ -4,9 +4,11 @@ public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5.0f;
     float cameraScrollSpeed = 2.0f;
+    public Vector2 margin = new Vector2(0.5f, 0.5f); // 画面端からの余白割合
 
     Rigidbody2D rb;
     Vector2 moveDirection;
+    Camera mainCamera;
 
     [Header("Shot Settings")]
     public GameObject bulletPrefab; // 弾のプレハブ
@@ -19,7 +21,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         // メインカメラからCameraControllerを取得し，スクロール速度をもらう
-        GameObject mainCamera = Camera.main.gameObject;
+        mainCamera = Camera.main;
         if (mainCamera != null)
         {
             var cameraController = mainCamera.GetComponent<CameraController>();
@@ -52,6 +54,11 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = finalVelocity;
     }
 
+    void LateUpdate()
+    {
+        ClampPosition();
+    }
+
     void Fire()
     {
         // firePosが設定されていなければ、自機の位置を使う
@@ -59,5 +66,19 @@ public class PlayerController : MonoBehaviour
 
         // 弾を生成する (原本, 場所, 回転)
         Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
+    }
+
+    void ClampPosition()
+    {
+        if (mainCamera == null) return;
+        // プレイヤーの現在位置
+        Vector3 pos = transform.position;
+        // 画面の端のワールド座標を取得
+        Vector3 bottomLeft = mainCamera.ViewportToWorldPoint(new Vector3(0.25f, 0, 0));
+        Vector3 topRight = mainCamera.ViewportToWorldPoint(new Vector3(0.75f, 1, 0));
+        // プレイヤーの位置をクランプ
+        float clampedX = Mathf.Clamp(pos.x, bottomLeft.x + margin.x, topRight.x - margin.x);
+        float clampedY = Mathf.Clamp(pos.y, bottomLeft.y + margin.y, topRight.y - margin.y);
+        transform.position = new Vector3(clampedX, clampedY, pos.z);
     }
 }
